@@ -1,111 +1,141 @@
 # Ml-project-1
 
-Potato Disease Detection using FastAPI and TensorFlow
+---
 
-Project Overview
-This project is a Potato Disease Detection application that uses a machine learning model to classify images of potato leaves into three categories:
+# Potato Disease Detection using FastAPI and TensorFlow
 
-Early Blight
-Late Blight
-Healthy
-The backend is built using FastAPI, and the machine learning model is served to make predictions based on uploaded images. The frontend is developed with HTML, CSS, and JavaScript for an interactive user interface.
+This repository contains a machine learning application for detecting diseases in potato leaves. The project is built using **FastAPI** for the backend and serves a TensorFlow-based model that classifies potato leaves as either:
+- **Early Blight**
+- **Late Blight**
+- **Healthy**
 
-Features
-Model Fetching: The machine learning model is automatically downloaded from Google Drive during the startup of the FastAPI server.
-Prediction Endpoint: Users can upload an image of a potato leaf, and the model will classify it into one of the three classes (Early Blight, Late Blight, or Healthy).
-Frontend Interface: Users can upload an image directly from their computer or capture one using their webcam, and get instant predictions.
-Cross-Origin Resource Sharing (CORS): CORS is enabled to allow interaction between the frontend and backend.
-Table of Contents
-Technologies Used
-Setup Instructions
-Running the Application
-Endpoints
-Frontend Instructions
-Technologies Used
-Backend:
+A web-based frontend is included, allowing users to upload images or use their webcam for real-time predictions.
 
-FastAPI
-TensorFlow
-Google Drive API (via gdown)
-Python (v3.7+)
-Uvicorn
-Frontend:
+---
 
-HTML/CSS
-TailwindCSS (for styling)
-JavaScript (for interaction)
-Setup Instructions
-Clone the repository:
+## Table of Contents
+- [Technologies Used](#technologies-used)
+- [Project Features](#project-features)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Endpoints](#endpoints)
+- [Frontend Instructions](#frontend-instructions)
+- [Future Improvements](#future-improvements)
+- [License](#license)
 
-bash
-Copy code
+---
+
+## Technologies Used
+
+### Backend:
+- [FastAPI](https://fastapi.tiangolo.com/) - High-performance backend API framework
+- [TensorFlow](https://www.tensorflow.org/) - Machine learning library used for model inference
+- [gdown](https://pypi.org/project/gdown/) - Google Drive downloader to fetch the pre-trained model
+- [Uvicorn](https://www.uvicorn.org/) - ASGI web server to run the FastAPI app
+
+### Frontend:
+- **HTML/CSS**
+- [TailwindCSS](https://tailwindcss.com/) - Utility-first CSS framework
+- **JavaScript** - Used for handling file uploads and webcam integration
+
+---
+
+## Project Features
+- **Potato Leaf Disease Detection**: Classifies potato leaves into Early Blight, Late Blight, or Healthy.
+- **REST API**: Provides endpoints for health checks and image prediction.
+- **Frontend**: Built with HTML/CSS and JavaScript, enabling users to upload images or capture them using a webcam.
+- **Model Loading**: Automatically downloads the machine learning model from Google Drive during the server startup.
+
+---
+
+## Installation
+
+### Clone the repository:
+
+```bash
 git clone https://github.com/your-username/potato-disease-detection.git
 cd potato-disease-detection
-Install required Python packages: Ensure you have Python 3.7 or higher installed. Then, create a virtual environment and install dependencies:
+```
 
-bash
-Copy code
+### Create a virtual environment and install dependencies:
+
+```bash
 python -m venv venv
 source venv/bin/activate  # On Windows use: venv\Scripts\activate
 pip install -r requirements.txt
-Google Drive Model Download: The model is hosted on Google Drive. The gdown package will download it automatically during the app startup.
+```
 
-Run the application: Start the FastAPI server by running the following command:
+### Run the application:
 
-bash
-Copy code
+```bash
 uvicorn main:app --reload --host 0.0.0.0 --port 5500
-This will run the backend server on localhost:5500.
+```
 
-Running the Application
-After starting the FastAPI server:
+---
 
-Access the backend API on http://localhost:5500/docs to explore the API documentation.
-Use the frontend by opening the index.html file in a web browser.
-Requirements:
-Python 3.7+
-pip for package management
-Backend
-The application automatically downloads the ML model from Google Drive when the server starts.
+## Usage
 
-Endpoints
-/ping [GET]
-Description: A simple health check endpoint.
-Response:
-json
-Copy code
-{
+### Backend
+
+1. **Run the FastAPI server** using the command above. This will start the backend at `http://localhost:5500`.
+2. **Access the API docs**: Open [http://localhost:5500/docs](http://localhost:5500/docs) in your browser to interact with the API via Swagger UI.
+3. **Make Predictions**: Use the `/predict` endpoint to upload an image and get a disease classification.
+
+### Frontend
+
+1. Open the `index.html` file in your browser.
+2. Upload an image or capture a photo using your webcam.
+3. Click the "Predict" button to see the prediction results.
+
+---
+
+## Endpoints
+
+### `/ping` [GET]
+- **Description**: Health check endpoint to ensure the API is running.
+- **Response**:
+  ```json
+  {
     "message": "Hello, Badi"
-}
-/predict [POST]
-Description: Accepts an uploaded image of a potato leaf and returns the predicted class along with confidence.
-Request:
-File (image)
-Response:
-json
-Copy code
-{
-    "class": "Early Blight",
-    "confidence": 0.95
-}
-Frontend Instructions
-Uploading Image:
+  }
+  ```
 
-The frontend provides an option to upload an image from your device or capture an image using your webcam.
-Drag and drop the image into the designated area or use the file input buttons.
-Prediction:
+### `/predict` [POST]
+- **Description**: Predicts the class of the potato leaf image.
+- **Request**: Upload an image file.
+- **Response**:
+  ```json
+  {
+    "class": "Late Blight",
+    "confidence": 0.92
+  }
+  ```
 
-Once an image is uploaded or captured, click the Predict button.
-The application sends the image to the backend FastAPI server for prediction.
-The predicted class (Early Blight, Late Blight, or Healthy) and the confidence score are displayed on the webpage.
-Frontend Technologies:
-TailwindCSS: For responsive design.
-FontAwesome: For icons.
-Future Improvements
-Expand the Dataset: Incorporate more diseases and classes for broader detection.
-Enhance UI: Improve the frontend design and user experience.
-Deploy on Cloud: Deploy both backend and frontend on a cloud platform like Railway, Vercel, or Netlify.
-License
-This project is licensed under the MIT License.
+---
 
-Feel free to customize and expand the README as per your specific needs or project updates.
+## Frontend Instructions
+
+The web-based frontend allows users to interact with the backend and get disease predictions by uploading images or using their webcam.
+
+- **Image Upload**: Drag and drop an image or click the upload button to select a file from your computer.
+- **Webcam Capture**: Use your webcam to capture an image directly for prediction.
+- **Prediction**: Once the image is uploaded, click the "Predict" button to receive the classification results.
+
+---
+
+## Future Improvements
+- **Deploy on Cloud**: Deploy the backend and frontend on cloud services like **Railway**, **Vercel**, or **Netlify** for broader access.
+- **Enhance the Model**: Expand the dataset to include more potato diseases or similar plant diseases.
+- **Optimize the Frontend**: Improve user experience and design for better interactivity.
+
+---
+
+## License
+This project is licensed under the MIT License. See the [LICENSE](./LICENSE) file for more details.
+
+---
+
+Feel free to fork this project, contribute, and report issues. For any questions, open an issue or contact me!
+
+
+
