@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>I WATCH - Plastic Type Detector</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        #preview-container {
+            width: auto;
+            padding: 10px;
+            padding-top: 30px;
+            height: auto;
+            text-align: center;
+            border-radius: 5px;
+            padding: 20px;
+        }
+        #preview-image {
+            width: 400px;
+        }
+        #result-container {
+            text-align: center;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col md:flex-row">
+    <!-- Sidebar -->
+    <div class="w-full md:w-64 bg-white p-4 md:h-screen">
+        <div class="mb-6 flex items-center justify-center md:justify-start">
+            <div class="bg-gray-200 w-12 h-12 flex items-center justify-center rounded-md mr-2">
+                <i class="fas fa-eye text-2xl text-gray-600"></i>
+            </div>
+            <h1 class="text-2xl font-bold text-gray-800">I WATCH</h1>
+        </div>
+
+        <div class="mb-4">
+            <div id="drop-zone" class="border-2 border-dashed border-gray-300 rounded-md p-4 text-center cursor-pointer hover:border-gray-400 transition duration-150">
+                <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-2"></i>
+                <p class="text-gray-600 text-sm">Drag & Drop Image</p>
+            </div>
+        </div>
+
+        <input id="file-upload" type="file" accept="image/*" class="hidden">
+
+        <button id="open-file-btn" class="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition duration-150 mb-2">
+            <i class="fas fa-folder-open mr-2"></i> Open File
+        </button>
+
+        <button id="open-webcam-btn" class="w-full bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600 transition duration-150 mb-2">
+            <i class="fas fa-camera mr-2"></i> Open Webcam
+        </button>
+
+        <button id="open-phone-btn" class="w-full bg-purple-500 text-white py-2 px-4 rounded-md hover:bg-purple-600 transition duration-150 mb-2">
+            <i class="fas fa-mobile-alt mr-2"></i> Open Phone camera
+        </button>
+
+        <button id="predict-btn" class="w-full bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 transition duration-150 disabled:bg-gray-400 disabled:cursor-not-allowed" disabled>
+            <i class="fas fa-magic mr-2"></i> Predict
+        </button>
+    </div>
+
+    <!-- Main content -->
+     <div class="text-blue-900 text-lg font-bold">
+        <h1>POTATO</h1>
+
+     </div>
+    <div class="flex-grow p-4">
+        <div id="preview-container" class="mb-6 hidden">
+            <h2 class="text-lg font-semibold mb-2 text-gray-800">Image Preview:</h2>
+            <img id="preview-image" src="" alt="Preview" class="max-w-2xl mx-auto rounded-md">
+        </div>
+
+        <div id="webcam-container" class="mb-6 hidden">
+            <h2 class="text-lg font-semibold mb-2 text-gray-800">Webcam:</h2>
+            <video id="webcam" class="w-full max-w-2xl mx-auto rounded-md" autoplay></video>
+            <button id="capture-btn" class="mt-2 bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600 transition duration-150">
+                <i class="fas fa-camera mr-2"></i> Capture Photo
+            </button>
+        </div>
+
+        <div id="result-container" class="mt-6 hidden">
+            <h2 class="text-lg font-semibold mb-2 text-gray-800">Prediction Result:</h2>
+            <p id="result-text" class="text-gray-600"></p>
+        </div>
+    </div>
+
+    <script>
+        const dropZone = document.getElementById('drop-zone');
+        const fileUpload = document.getElementById('file-upload');
+        const previewContainer = document.getElementById('preview-container');
+        const previewImage = document.getElementById('preview-image');
+        const predictBtn = document.getElementById('predict-btn');
+        const resultContainer = document.getElementById('result-container');
+        const resultText = document.getElementById('result-text');
+        const webcam = document.getElementById('webcam');
+        const captureBtn = document.getElementById('capture-btn');
+        const webcamContainer = document.getElementById('webcam-container');
+        const openFileBtn = document.getElementById('open-file-btn');
+        const openWebcamBtn = document.getElementById('open-webcam-btn');
+        const openPhoneBtn = document.getElementById('open-phone-btn');
+
+        let selectedFile = null;
+        let webcamStream = null;
+
+        openFileBtn.addEventListener('click', () => fileUpload.click());
+
+        openWebcamBtn.addEventListener('click', async () => {
+            try {
+                webcamStream = await navigator.mediaDevices.getUserMedia({ video: true });
+                webcam.srcObject = webcamStream;
+                webcamContainer.classList.remove('hidden');
+                previewContainer.classList.add('hidden');
+            } catch (error) {
+                console.error('Error accessing webcam:', error);
+            }
+        });
+
+        openPhoneBtn.addEventListener('click', () => {
+            alert('Open phone camera functionality not implemented in this demo.');
+        });
+
+        captureBtn.addEventListener('click', () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = webcam.videoWidth;
+            canvas.height = webcam.videoHeight;
+            const context = canvas.getContext('2d');
+            context.drawImage(webcam, 0, 0, canvas.width, canvas.height);
+
+            canvas.toBlob((blob) => {
+                selectedFile = new File([blob], 'webcam-photo.jpg', { type: 'image/jpeg' });
+                previewImage.src = canvas.toDataURL('image/jpeg');
+                previewContainer.classList.remove('hidden');
+                webcamContainer.classList.add('hidden');
+                predictBtn.disabled = false;
+
+                webcamStream.getTracks().forEach(track => track.stop());
+            });
+        });
+
+        dropZone.addEventListener('click', () => fileUpload.click());
+
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('border-blue-500');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('border-blue-500');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('border-blue-500');
+            handleFile(e.dataTransfer.files[0]);
+        });
+
+        fileUpload.addEventListener('change', (e) => {
+            handleFile(e.target.files[0]);
+        });
+
+        function handleFile(file) {
+            if (file && file.type.startsWith('image/')) {
+                selectedFile = file;
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    previewImage.src = e.target.result;
+                    previewContainer.classList.remove('hidden');
+                    webcamContainer.classList.add('hidden');
+                    predictBtn.disabled = false;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        predictBtn.addEventListener('click', async () => {
+            if (!selectedFile) return;
+
+            const formData = new FormData();
+            formData.append('file', selectedFile);
+
+            try {
+                const response = await fetch('http://localhost:5500/predict', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const result = await response.json();
+                resultText.textContent = `Class: ${result.class}, Confidence: ${(result.confidence * 100).toFixed(2)}%`;
+                resultContainer.classList.remove('hidden');
+            } catch (error) {
+                console.error('Error:', error);
+                resultText.textContent = 'An error occurred during prediction.';
+                resultContainer.classList.remove('hidden');
+            }
+        });
+    </script>
+</body>
+</html>
