@@ -21,7 +21,7 @@ app.add_middleware(
 )
 
 # Load TensorFlow model
-MODEL = tf.keras.models.load_model("./models/3.h5")
+MODEL = tf.keras.models.load_model("models/3.h5")
 CLASS_NAMES = [
     "HDPE (High-Density Polyethylene)",
     "OTHERS",
